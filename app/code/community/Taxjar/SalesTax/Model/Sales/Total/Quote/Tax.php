@@ -20,6 +20,41 @@
  */
 class Taxjar_SalesTax_Model_Sales_Total_Quote_Tax extends Mage_Tax_Model_Sales_Total_Quote_Tax
 {
+    private function convertRate(array $taxjarRate, Mage_Sales_Model_Quote_Address $address): array
+    {
+        $taxRule = Mage::getModel('tax/calculation_rule')->load('TaxJar Backup Rates', 'code');
+
+        $countryCode = $address->getCountryId();
+
+        $regionId = $address->getRegionId();
+        $region = Mage::getModel('directory/region')->load($regionId);
+        $regionCode = $region->getCode();
+
+        $postcode = $address->getPostcode();
+
+        $rateCode = "{$countryCode}-{$regionCode}-{$postcode}";
+
+        $ratePercent = (float)($taxjarRate['rate'] * 100);
+
+        $appliedRate = [
+            [
+                "rates"   => [
+                    [
+                        "code"     => $rateCode,
+                        "title"    => $rateCode,
+                        "percent"  => $ratePercent,
+                        "position" => $taxRule->getPosition(),
+                        "priority" => $taxRule->getPriority(),
+                        "rule_id"  => $taxRule->getId()
+                    ],
+                ],
+                "percent" => $ratePercent,
+                "id"      => $rateCode,
+            ],
+        ];
+
+        return $appliedRate;
+    }
     /**
      * Collect tax totals for quote address
      *
@@ -77,6 +112,12 @@ class Taxjar_SalesTax_Model_Sales_Total_Quote_Tax extends Mage_Tax_Model_Sales_T
                     }
                 }
             }
+
+            $ratePercent = (float)($rates['rate'] * 100);
+
+            $appliedRate = $this->convertRate($rates, $address);
+
+            $this->_saveAppliedTaxes($address, $appliedRate, $rates['amount_to_collect'], $rates['amount_to_collect'], $ratePercent);
         } else {
             return parent::collect($address);
         }
