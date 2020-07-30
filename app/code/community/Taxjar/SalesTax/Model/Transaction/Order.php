@@ -60,7 +60,7 @@ class Taxjar_SalesTax_Model_Transaction_Order extends Taxjar_SalesTax_Model_Tran
         return $this->request;
     }
 
-   /**
+    /**
      * Push an order transaction to SmartCalcs
      *
      * @param string|null $forceMethod
@@ -123,7 +123,7 @@ class Taxjar_SalesTax_Model_Transaction_Order extends Taxjar_SalesTax_Model_Tran
      * @return bool
      */
     public function isSyncable($order) {
-        $states = array('complete', 'closed');
+        $states = array('complete', 'closed', 'processing');
 
         if (!in_array($order->getState(), $states)) {
             return false;

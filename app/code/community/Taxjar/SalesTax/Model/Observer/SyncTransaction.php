@@ -28,9 +28,7 @@ class Taxjar_SalesTax_Model_Observer_SyncTransaction
             return $this;
         }
 
-        if (!Mage::registry('taxjar_sync')) {
-            Mage::register('taxjar_sync', true);
-        } else {
+        if (Mage::registry('taxjar_sync')) {
             return $this;
         }
 
@@ -40,9 +38,15 @@ class Taxjar_SalesTax_Model_Observer_SyncTransaction
             $order = $observer->getEvent()->getOrder();
         }
 
+        if (!$order->getState()) {
+            return $this;
+        }
+
         $orderTransaction = Mage::getModel('taxjar/transaction_order');
 
         if ($orderTransaction->isSyncable($order)) {
+            Mage::register('taxjar_sync', true);
+
             try {
                 $orderTransaction->build($order);
                 $orderTransaction->push();
