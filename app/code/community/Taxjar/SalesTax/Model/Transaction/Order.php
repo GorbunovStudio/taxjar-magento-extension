@@ -123,7 +123,7 @@ class Taxjar_SalesTax_Model_Transaction_Order extends Taxjar_SalesTax_Model_Tran
      * @return bool
      */
     public function isSyncable($order) {
-        $states = array('complete', 'closed', 'processing');
+        $states = array('complete', 'closed', 'processing', 'holded');
 
         if (!in_array($order->getState(), $states)) {
             return false;
