@@ -49,7 +49,7 @@ class Taxjar_SalesTax_Model_Observer_SyncTransaction
             return $this;
         }
 
-        if ($isSyncOnOrderUpdate && $order->getTjSalestaxSyncDate()) {
+        if (!$isSyncOnOrderUpdate && $order->getTjSalestaxSyncDate()) {
             return $this;
         }
 
