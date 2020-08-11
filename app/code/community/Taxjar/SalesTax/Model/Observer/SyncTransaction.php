@@ -42,6 +42,17 @@ class Taxjar_SalesTax_Model_Observer_SyncTransaction
             return $this;
         }
 
+        $transactionsSyncThreshold = Mage::getStoreConfig('tax/taxjar/transactions_threshold');
+        $isSyncOnOrderUpdate = Mage::getStoreConfig('tax/taxjar/transactions_updates');
+
+        if ($transactionsSyncThreshold && strtotime($order->getCreatedAt()) < strtotime($transactionsSyncThreshold)) {
+            return $this;
+        }
+
+        if ($isSyncOnOrderUpdate && $order->getTjSalestaxSyncDate()) {
+            return $this;
+        }
+
         $orderTransaction = Mage::getModel('taxjar/transaction_order');
 
         if ($orderTransaction->isSyncable($order)) {
