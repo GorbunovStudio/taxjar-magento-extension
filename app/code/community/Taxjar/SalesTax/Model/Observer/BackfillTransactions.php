@@ -37,7 +37,7 @@ class Taxjar_SalesTax_Model_Observer_BackfillTransactions
             return;
         }
 
-        $statesToMatch = array('complete', 'closed');
+        $statesToMatch = array('complete', 'closed', 'processing', 'holded');
         $fromDate = Mage::app()->getRequest()->getParam('from_date');
         $toDate = Mage::app()->getRequest()->getParam('to_date');
 
